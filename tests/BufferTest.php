@@ -20,9 +20,8 @@ test('Exception when use End without Start previously', function () {
 );
 
 test('Exception when not found template path on view::render', function () {
-
-});
-
-test('Exception when not found template path on view::start', function () {
-
-});
+   Vx\View::Start('no_found_template.php');
+})->throws(
+    Vx\Exception\TemplateNotFoundException::class,
+    'Template not found: no_found_template.php'
+);

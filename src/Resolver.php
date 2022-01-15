@@ -6,6 +6,7 @@ use SplStack;
 use Exception;
 use Throwable;
 use Vx\Exception\ComponentException;
+use Vx\Exception\TemplateNotFoundException;
 
 class Resolver
 {
@@ -40,9 +41,14 @@ class Resolver
      * Start render ViewComponent
      * @param string $path
      * @param array $params
+     * @throws TemplateNotFoundException
      */
     public function start(string $path, array $params = [])
     {
+        if (!file_exists($path)) {
+            throw new TemplateNotFoundException(sprintf('Template not found: %s', $path));
+        }
+
         /** An output buffer is initialised. */
         ob_start();
 
@@ -63,6 +69,7 @@ class Resolver
 
     /**
      * End render ViewComponent
+     * @throws ComponentException
      */
     public function end()
     {
@@ -72,7 +79,8 @@ class Resolver
         $viewComponent->setContent(ob_get_clean());
 
         /** Create variables from array */
-        extract($viewComponent->getParams());
+        $vars = $viewComponent->getParams();
+        extract($vars);
 
         include $viewComponent->getPath();
     }
@@ -141,7 +149,7 @@ class Resolver
      */
     public function cleanStack(int $obLevel = 0)
     {
-       if(!$obLevel > 0) {
+       if($obLevel > 0) {
            $obLevel = ob_get_level();
        }
 
