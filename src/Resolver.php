@@ -2,11 +2,13 @@
 
 namespace Vx;
 
+use Closure;
 use SplStack;
 use Exception;
 use Throwable;
 use Vx\Exception\ComponentException;
 use Vx\Exception\TemplateNotFoundException;
+use Vx\Exception\ViewElementException;
 
 class Resolver
 {
@@ -16,11 +18,17 @@ class Resolver
     /** @var $instance Resolver */
     protected static $instance;
 
+    /** @var $config Config */
+    protected $config;
+
+
+    protected $filters = [];
+
 
     public function __construct(array $config = [])
     {
         if (!is_null(static::$instance)) {
-            throw new Exception('A View instance han been declare');
+            throw new Exception('A View instance has been declare');
         }
 
         static::$instance = $this;
@@ -38,6 +46,15 @@ class Resolver
     }
 
     /**
+     * Set Config values
+     * @param Config|null $config
+     * @return void
+     */
+    public function config(?Config $config) {
+        $this->config = $config;
+    }
+
+    /**
      * Start render ViewComponent
      * @param string $path
      * @param array $params
@@ -45,6 +62,8 @@ class Resolver
      */
     public function start(string $path, array $params = [])
     {
+        $path = $this->checkConfig($path);
+
         if (!file_exists($path)) {
             throw new TemplateNotFoundException(sprintf('Template not found: %s', $path));
         }
@@ -55,6 +74,22 @@ class Resolver
         $this->stack->push(new Component($path, $params));
     }
 
+
+    /**
+     * Validate if exits config parameters
+     *
+     * @param $path
+     * @return string
+     */
+    private function checkConfig($path) : string
+    {
+        if (is_null($this->config)) {
+            return $path;
+        }
+
+        $path = $this->config->views() . DIRECTORY_SEPARATOR . $path;
+        return !$this->config->useExtension() ? $path.'.php' : $path;
+    }
 
     /**
      *  Return var in Json format
@@ -121,6 +156,39 @@ class Resolver
             $this->cleanStack($level);
             throw $e;
         }
+    }
+
+
+    /**
+     * Add filter
+     *
+     * @param string $name
+     * @param Closure $filter
+     * @return void
+     */
+    public function addFilter(string $name, Closure $filter)
+    {
+        $this->filters[$name] = $filter;
+    }
+
+
+    /**
+     * Use registered filter
+     *
+     * @param $value
+     * @param string $filterName
+     * @return mixed
+     * @throws ViewElementException
+     */
+    public function filter($value, string $filterName )
+    {
+        if (!isset($this->filters[$filterName])) {
+            throw new ViewElementException(sprintf(
+                'The filter "%s" does not exists', $filterName
+            ));
+        }
+
+        return call_user_func($this->filters[$filterName], $value);
     }
 
 
