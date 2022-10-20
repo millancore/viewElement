@@ -9,7 +9,7 @@ if(!function_exists('vxSlot')) {
 
 if (!function_exists('vxStart')) {
 
-    function vxStart(string $path, array $params)
+    function vxStart(string $path, array $params = [])
     {
         Vx\View::start($path, $params);
     }
