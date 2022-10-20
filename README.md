@@ -91,5 +91,5 @@ $viewResolver->addFilter('upper', fn($string) => strtoupper($string));
 
 #### Use them
 ```php
-<h1> <?= VxFilter('mi name', 'upper') ?> </h1> <!-- MI NAME >
+<h1> <?= VxFilter('mi name', 'upper') ?> </h1> <!-- MI NAME -->
 ```
