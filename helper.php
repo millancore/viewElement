@@ -22,3 +22,12 @@ if (!function_exists('vxEnd')) {
         Vx\View::end();
     }
 }
+
+if (!function_exists('vxFilter')) {
+
+    function vxFilter($value, string $filterName)
+    {
+       return Vx\View::filter($value, $filterName);
+    }
+}
+
