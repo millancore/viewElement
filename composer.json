@@ -1,12 +1,20 @@
 {
+  "name": "millancore/view-element",
+  "description": "Template system without configuration or dependencies.",
+  "type": "library",
+  "license": "MIT",
+  "authors": [{
+    "name": "Juan Millan",
+    "email": "juanes14569@gmail.com"
+  }],
   "require": {
     "php": ">=7.4",
     "ext-json": "*"
   },
   "require-dev": {
-    "pestphp/pest": "v1.20",
+    "pestphp/pest": "v1.22.1",
     "symfony/var-dumper": "^5.3",
-    "phan/phan": "5.x"
+    "phan/phan": "5.4.1"
   },
   "autoload": {
     "psr-4": {
@@ -15,5 +23,14 @@
     "files": [
       "helper.php"
     ]
+  },
+  "scripts": {
+    "test": "./vendor/bin/pest",
+    "lint": "./vendor/bin/phan --allow-polyfill-parser"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
   }
 }
