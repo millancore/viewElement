@@ -1,3 +1,4 @@
+
 # ViewElement
 
 This is a library for creating modular views in PHP, without configuration or dependencies.
@@ -6,6 +7,11 @@ This is a library for creating modular views in PHP, without configuration or de
 - Render
 - Filters - pending
 
+# Install
+
+```bash 
+ composer require millancore/view-element
+```
 
 ## Slot
 You can create a template without defining the template body, it is passed by the view that will use it.
